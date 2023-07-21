@@ -6,7 +6,7 @@ find_package(Zephyr)
 project(protoball)
 
 include_directories(src)
-target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE src/main.c src/leds.c)
 
 set_property(GLOBAL APPEND PROPERTY HEX_FILES_TO_MERGE
 	${app_bootloader_hex}
