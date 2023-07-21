@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <leds.h>
 #include <pim.h>
+#include <hid.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/i2c.h>
@@ -16,12 +17,17 @@ void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
 } 
 
 void on_tb_move(uint8_t left, uint8_t right, uint8_t up, uint8_t down, uint8_t button) {
-	LOG_INF("left: %i, right: %i, up: %i, down: %i, button: %i", left, right, up, down, button);
+	//LOG_INF("left: %i, right: %i, up: %i, down: %i, button: %i", left, right, up, down, button);
+	int8_t x = left - right;
+	int8_t y = up - down;
+	uint8_t b = button ? LEFT_MOUSE_BTN : 0;
+	hid_report(b,x,y);
 }
 
 void main() {
 	config_leds();
 	if (!config_pim()) return;
+	if (!config_hid()) return;
 	pim_set_callback(on_tb_move);
 	LOG_INF("Success!");
 
