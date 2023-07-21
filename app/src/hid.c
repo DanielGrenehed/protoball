@@ -39,13 +39,27 @@ uint8_t config_hid() {
 	return 1;
 }
 
-uint8_t hid_report(uint8_t btns, int8_t x, int8_t y) {
+static uint8_t report = 0;
+void hid_add_to_report(uint8_t btns, int8_t x, int8_t y) {
+	rep_status[X_REP_POS] = (uint8_t) ((int8_t)rep_status[X_REP_POS] + x);
+	rep_status[Y_REP_POS] = (uint8_t) ((int8_t)rep_status[Y_REP_POS] + y);
 	rep_status[BTN_REP_POS] = btns;
-	rep_status[X_REP_POS] = (uint8_t)x;
-	rep_status[Y_REP_POS] = (uint8_t)y;
+	report = 1;
+}
+
+uint8_t hid_report() {
+	if (!report) return 1;
+
 	int ret = hid_int_ep_write(hid_dev, rep_status, sizeof(rep_status), NULL);
-	if (ret) LOG_ERR("write error, %d", ret);
-	return 0;
+	if (ret) {
+		LOG_ERR("write error, %d", ret);
+		return 0;
+	}
+	report = 0;
+	rep_status[BTN_REP_POS] = 0;
+	rep_status[X_REP_POS] = 0;
+	rep_status[Y_REP_POS] = 0;
+	return 1;
 }
 
 

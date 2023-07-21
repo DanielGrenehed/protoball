@@ -7,6 +7,8 @@
 
 uint8_t config_hid();
 
-uint8_t hid_report(uint8_t buttons, int8_t x, int8_t y);
+void hid_add_to_report(uint8_t btns, int8_t x, int8_t y);
+
+uint8_t hid_report();
 
 #endif /* PROTOBALL_HID_H */
